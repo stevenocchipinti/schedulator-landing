@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Schedulator</title>
+  <style>
+    @font-face {
+      font-family: 'Raleway';
+      font-style: normal;
+      font-weight: 400;
+      src: local('Raleway'), url(Raleway.woff2) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+    }
+
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7)), url('background.jpg') no-repeat center;
+      background-size: cover;
+      color: #FFF;
+      text-shadow: 0 1px 1px rgba(0,0,0,.6);
+      height: 100vh;
+      font-family: 'Raleway', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 60px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    main {
+      padding: 50px;
+      margin-bottom: 100px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+    }
+
+    input, button {
+      padding: 20px 30px;
+      margin: 10px;
+      font-size: 20px;
+      border-radius: 3px;
+      background-color: #FFF;
+      border: 1px solid #AAA;
+    }
+
+    button {
+      background-color: #39A2FF;
+      color: #FFF;
+      border: 0
+    }
+
+    p {
+      padding: 20px 100px;
+      font-size: 30px;
+    }
+
+    #signup-success, #signup-error {
+      display: none;
+    }
+  </style>
+  <script src="https://cdn.firebase.com/js/client/2.2.7/firebase.js"></script>
+</head>
+<body>
+
+  <h1>Schedulator</h1>
+
+  <main>
+    <p id="signup-success">Thank you!</p>
+    <p id="signup-error">Sorry, something went wrong!</p>
+
+    <form id="signup-form" role="form" onsubmit="signup(this); return false;">
+      <h2>Sign up for a notification when we go live!</h2>
+      <input name="email" type="email" placeholder="Your email address" required>
+      <button id="signup-button" type="submit">Join now</button>
+    </form>
+  </main>
+
+  <script>
+    var signupForm = document.getElementById('signup-form');
+    var signupSuccess = document.getElementById('signup-success');
+    var signupError = document.getElementById('signup-error');
+    var signupBtn = document.getElementById('signup-button');
+    var onSignupComplete = function(error) {
+      signupBtn.disabled = false;
+      signupBtn.textContent = "Join now"
+      if (error) {
+        signupError.style.display = 'block';
+      } else {
+        signupSuccess.style.display = 'block';
+        signupForm.style.display = 'none';
+      }
+    };
+
+    function signup(formObj) {
+      var emailStore = new Firebase("https://schedulator-landing.firebaseio.com/registrations");
+      emailStore.push({
+        email: formObj.email.value,
+        timestamp: Firebase.ServerValue.TIMESTAMP
+      }, onSignupComplete);
+      signupBtn.disabled = true;
+      signupBtn.textContent = "Sending..."
+    }
+  </script>
+</body>
+</html>
